@@ -9,56 +9,56 @@ require("../model/userDetails");
 const User = mongoose.model("UserInfo");
 
 const registerUser = async (req, res) => {
-    const { username, email, password } = req.body;
+  const { username, email, password } = req.body;
 
-    const plainPassword = password;
-  
-    const encryptedPassword = await bcrypt.hash(password, 10);
-  
-    try {
-      const oldUser = await User.findOne({ email }).collation({});
-  
-      if (oldUser) {
-        return res.send({ status: "Already Registred" });
-      }
-  
-      const newUser = await User.create({
-        username,
-        email,
-        password: encryptedPassword,      
-        userType: "General User",
-      });
-  
-      // Sending email
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'vidathamarasekara99@gmail.com', // your email
-          pass: 'jafx mrun cymb pgap' // your password
-        }
-      });
-  
-      const mailOptions = {
-        from: 'vidathamarasekara99@gmail.com',
-        to: newUser.email,
-        subject: 'Welcome to Batik Saree!',
-        text: `Hello ${newUser.username},\n\nYour account has been successfully created.\nYour username : ${newUser.username}\nYour password : ${plainPassword}
-        .\nYou can now login with your email and password.`
-      };
-  
-      transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
-  
-      res.send({ status: "ok" });
-    } catch (error) {
-      res.send({ status: "error" });
+  const plainPassword = password;
+
+  const encryptedPassword = await bcrypt.hash(password, 10);
+
+  try {
+    const oldUser = await User.findOne({ email }).collation({});
+
+    if (oldUser) {
+      return res.send({ status: "Already Registred" });
     }
-  };
+
+    const newUser = await User.create({
+      username,
+      email,
+      password: encryptedPassword,
+      userType: "General User",
+    });
+
+    // Sending email
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "vidathamarasekara99@gmail.com", // your email
+        pass: "jafx mrun cymb pgap", // your password
+      },
+    });
+
+    const mailOptions = {
+      from: "vidathamarasekara99@gmail.com",
+      to: newUser.email,
+      subject: "Welcome to Batik Saree!",
+      text: `Hello ${newUser.username},\n\nYour account has been successfully created.\nYour username : ${newUser.username}\nYour password : ${plainPassword}
+        .\nYou can now login with your email and password.`,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+
+    res.send({ status: "ok" });
+  } catch (error) {
+    res.send({ status: "error" });
+  }
+};
 
 const loginUser = async (req, res) => {
   const { username, password } = req.body;
