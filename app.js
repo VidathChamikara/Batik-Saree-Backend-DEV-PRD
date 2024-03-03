@@ -2,11 +2,13 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const connectDatabase = require("./dbConnection");
-const router = require("./route/userRoute");
+const userrouter = require("./route/userRoute");
+const contactrouter = require("./route/contactRoute");
 
 app.use(express.json());
 app.use(cors());
-app.use("/api", router);
+app.use("/api/user", userrouter);
+app.use("/api/contact", contactrouter);
 
 connectDatabase();
 
