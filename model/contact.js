@@ -7,8 +7,8 @@ const contactScehma = new mongoose.Schema(
     message: String,       
   },
   {
-    collation: "contact",
+    collation: "Contact",
   }
 );
 
-mongoose.model("contact", contactScehma);
+mongoose.model("Contact", contactScehma);
