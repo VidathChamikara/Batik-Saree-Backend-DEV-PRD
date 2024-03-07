@@ -9,7 +9,7 @@ require("../model/userDetails");
 const User = mongoose.model("UserInfo");
 
 const registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, userType } = req.body;
 
   const plainPassword = password;
 
@@ -26,7 +26,7 @@ const registerUser = async (req, res) => {
       username,
       email,
       password: encryptedPassword,
-      userType: "General User",
+      userType,
     });
 
     // Sending email
@@ -68,7 +68,7 @@ const loginUser = async (req, res) => {
   }
   if (await bcrypt.compare(password, user.password)) {
     const token = jwt.sign({ email: user.email }, JWT_SECRET, {
-      expiresIn: "60m",
+      expiresIn: "1d",
     });
     if (res.status(201)) {
       return res.json({ status: "ok", data: token });
