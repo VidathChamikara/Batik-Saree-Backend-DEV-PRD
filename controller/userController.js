@@ -9,7 +9,7 @@ require("../model/userDetails");
 const User = mongoose.model("UserInfo");
 
 const registerUser = async (req, res) => {
-  const { username, email, password, userType } = req.body;
+  const { username, email, password } = req.body;
 
   const plainPassword = password;
 
@@ -26,7 +26,7 @@ const registerUser = async (req, res) => {
       username,
       email,
       password: encryptedPassword,
-      userType,
+      userType: "General User",
     });
 
     // Sending email
