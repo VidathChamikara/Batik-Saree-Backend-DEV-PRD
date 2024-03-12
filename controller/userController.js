@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const JWT_SECRET =
-  "";
+  "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
 
 require("../model/userDetails");
 const User = mongoose.model("UserInfo");
@@ -33,8 +33,8 @@ const registerUser = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "", // your email
-        pass: "", // your password
+        user: "vidathamarasekara99@gmail.com", // your email
+        pass: "jafx mrun cymb pgap", // your password
       },
     });
 
