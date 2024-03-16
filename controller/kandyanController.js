@@ -24,9 +24,9 @@ const postImage = async (req, res) => {
       // Save file paths to the database
       const kandyan = new Kandyan({
         modelno: req.body.modelno,
-        layer1Img: layer1Img[0].path, // Save the file path for layer1Img
-        layer2Img: layer2Img[0].path, // Save the file path for layer2Img
-        layer3Img: layer3Img[0].path, // Save the file path for layer3Img
+        layer1Img: layer1Img[0].originalname, // Save the original file name for layer1Img
+        layer2Img: layer2Img[0].originalname, // Save the original file name for layer2Img
+        layer3Img: layer3Img[0].originalname, // Save the original file name for layer3Img
       });
 
       const savedKandyan = await kandyan.save();

@@ -11,6 +11,7 @@ app.use(cors());
 app.use("/api/user", userrouter);
 app.use("/api/contact", contactrouter);
 app.use("/api/kandyan", kandyanrouter);
+app.use('/uploads', express.static('uploads'))
 
 connectDatabase();
 
