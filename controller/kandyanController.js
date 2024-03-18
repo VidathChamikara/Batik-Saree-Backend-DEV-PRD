@@ -1,44 +1,40 @@
 const mongoose = require("mongoose");
-const cloudinary = require("../utils/cloudinary");
+const upload = require("../utils/multerConfig"); // Import Multer configuration
 
 require("../model/kandyan");
-const KandyanInfo = mongoose.model("KandyanInfo");
+const Kandyan = mongoose.model("KandyanInfo");
 
 // POST function to handle image upload
+const uploadImage = upload.fields([
+  { name: "layer1Img", maxCount: 1 },
+  { name: "layer2Img", maxCount: 1 },
+  { name: "layer3Img", maxCount: 1 },
+]); // Fields specifies the form fields for each image
 
-const uploadImage = async (req, res) => {
-  const { modelno, layer1Img, layer2Img, layer3Img } = req.body;
-
+const  uploadImages = async (req, res) => {
   try {
-    if (!layer1Img || !layer2Img || !layer3Img) {
-      return res.status(400).json({ error: "Please provide all three images" });
-    }
+    uploadImage(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({ error: err.message });
+      }
 
-    const uploadPromises = [layer1Img, layer2Img, layer3Img].map(async (img) => {
-      const result = await cloudinary.uploader.upload(img, {
-        folder: "kandyan",
-        // width: 300,
-        // crop: "scale"
+      // Get file paths from req.files object
+      const { layer1Img, layer2Img, layer3Img } = req.files;
+
+      // Save file paths to the database
+      const kandyan = new Kandyan({
+        modelno: req.body.modelno,
+        layer1Img: layer1Img[0].path, // Save the file path for layer1Img
+        layer2Img: layer2Img[0].path, // Save the file path for layer2Img
+        layer3Img: layer3Img[0].path, // Save the file path for layer3Img
       });
-      return {
-        public_id: result.public_id,
-        url: result.secure_url,
-      };
+
+      const savedKandyan = await kandyan.save();
+
+      res.status(201).json(savedKandyan);
     });
-
-    const [layer1, layer2, layer3] = await Promise.all(uploadPromises);
-
-    const kandyan = await KandyanInfo.create({
-      modelno,
-      layer1Img: layer1,
-      layer2Img: layer2,
-      layer3Img: layer3,
-    });
-
-    res.send({ status: "ok" });
   } catch (error) {
-    console.error("Error uploading images:", error);
-    res.status(500).send({ error: "An error occurred while uploading the images." });
+    res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -53,4 +49,4 @@ const getKandyanData = async (req, res) => {
   }
 };
 
-module.exports = { uploadImage, getKandyanData };
+module.exports = { uploadImages, getKandyanData };
