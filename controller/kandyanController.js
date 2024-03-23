@@ -24,7 +24,7 @@ const uploadImage = async (req, res) => {
       modelNo: modelNo,
       layer1image: uploadedUrls[0],
       layer2image: uploadedUrls[1],
-      layer3image3: uploadedUrls[2],
+      layer3image: uploadedUrls[2],
     });
 
     // Save the instance to MongoDB

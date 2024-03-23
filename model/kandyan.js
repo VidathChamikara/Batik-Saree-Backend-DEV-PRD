@@ -5,7 +5,7 @@ const KandyanScehma = new mongoose.Schema(
     modelNo: String,   
     layer1image: String, 
     layer2image: String, 
-    layer3image3: String,   
+    layer3image: String,   
    
   },
   {
