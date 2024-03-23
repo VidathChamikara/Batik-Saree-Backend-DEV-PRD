@@ -7,7 +7,11 @@ const {
      uploadImage, getKandyanData
 } = require("../controller/kandyanController");
 
-router.post('/upload', upload.single('image'), uploadImage); // Handle image upload
+router.post('/upload', upload.fields([
+    { name: 'image', maxCount: 1 },
+    { name: 'image2', maxCount: 1 },
+    { name: 'image3', maxCount: 1 }
+  ]), uploadImage);
 router.get("/getKandyanData",  getKandyanData);
 
 

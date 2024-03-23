@@ -7,35 +7,30 @@ const Kandyan = mongoose.model("KandyanInfo");
 
 const uploadImage = async (req, res) => {
   try {
-    // Upload image to Cloudinary
-    cloudinary.uploader.upload(req.file.path, { folder: 'Batik' },async (err, result) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({
-          success: false,
-          message: 'Error uploading image',
-        });
-      }
+    const { image, image2, image3 } = req.files; // Multer stores uploaded files in req.files
 
-      // Create a new Kandyan document with the Cloudinary image URL
-      const newKandyan = new Kandyan({
-        image: result.secure_url, // Assuming 'secure_url' contains the Cloudinary image URL
-        // Other fields if needed
-      });
-
-      // Save the new Kandyan document to the database
-      await newKandyan.save();
-
-      // Respond with success message and uploaded image data
-      res.status(200).json({
-        success: true,
-        message: 'Image uploaded successfully!',
-        data: result,
-      });
+    // Upload images to Cloudinary
+    const uploadPromises = [image, image2, image3].map(async (image) => {
+      const result = await cloudinary.uploader.upload(image[0].path);
+      return result.secure_url;
     });
+
+    // Wait for all uploads to complete
+    const uploadedUrls = await Promise.all(uploadPromises);
+
+    // Create a new instance of KandyanInfo with image URLs
+    const kandyan = new Kandyan({
+      image: uploadedUrls[0],
+      image2: uploadedUrls[1],
+      image3: uploadedUrls[2],
+    });
+
+    // Save the instance to MongoDB
+    await kandyan.save();
+
+    res.status(200).json({ success: true, message: 'Images uploaded successfully' });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
