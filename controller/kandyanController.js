@@ -7,11 +7,12 @@ const Kandyan = mongoose.model("KandyanInfo");
 
 const uploadImage = async (req, res) => {
   try {
-    const { image, image2, image3 } = req.files; // Multer stores uploaded files in req.files
+    const { modelNo } = req.body; // Assuming modelNo is sent as a text input in the request body
+    const { layer1image, layer2image, layer3image } = req.files; // Multer stores uploaded files in req.files
 
     // Upload images to Cloudinary
-    const uploadPromises = [image, image2, image3].map(async (image) => {
-      const result = await cloudinary.uploader.upload(image[0].path);
+    const uploadPromises = [ layer1image, layer2image, layer3image].map(async (image) => {
+      const result = await cloudinary.uploader.upload(image[0].path, { folder: 'Batik' });
       return result.secure_url;
     });
 
@@ -20,9 +21,10 @@ const uploadImage = async (req, res) => {
 
     // Create a new instance of KandyanInfo with image URLs
     const kandyan = new Kandyan({
-      image: uploadedUrls[0],
-      image2: uploadedUrls[1],
-      image3: uploadedUrls[2],
+      modelNo: modelNo,
+      layer1image: uploadedUrls[0],
+      layer2image: uploadedUrls[1],
+      layer3image3: uploadedUrls[2],
     });
 
     // Save the instance to MongoDB

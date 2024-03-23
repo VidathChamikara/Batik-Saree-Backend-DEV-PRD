@@ -8,9 +8,9 @@ const {
 } = require("../controller/kandyanController");
 
 router.post('/upload', upload.fields([
-    { name: 'image', maxCount: 1 },
-    { name: 'image2', maxCount: 1 },
-    { name: 'image3', maxCount: 1 }
+    { name: 'layer1image', maxCount: 1 },
+    { name: 'layer2image', maxCount: 1 },
+    { name: 'layer3image', maxCount: 1 }
   ]), uploadImage);
 router.get("/getKandyanData",  getKandyanData);
 
