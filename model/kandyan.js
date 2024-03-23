@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
 const KandyanScehma = new mongoose.Schema(
-  {
-    modelno: String,
-    layer1Img: String,
-    layer2Img: String,
-    layer3Img: String,
+  {    
+    image: String, 
+    image2: String, 
+    image3: String,   
+   
   },
   {
     collection: "KandyanInfo",

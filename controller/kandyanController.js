@@ -1,46 +1,43 @@
+const express = require('express');
 const mongoose = require("mongoose");
-const upload = require("../utils/multerConfig"); // Import Multer configuration
-
+const upload = require("../middleware/multerConfig"); // Import Multer configuration
+const cloudinary = require("../utils/cloudinary");
 require("../model/kandyan");
 const Kandyan = mongoose.model("KandyanInfo");
 
-// POST function to handle image upload
-const uploadImage = upload.fields([
-  { name: "layer1Img", maxCount: 1 },
-  { name: "layer2Img", maxCount: 1 },
-  { name: "layer3Img", maxCount: 1 },
-]); // Fields specifies the form fields for each image
-
-const uploadImages = async (req, res) => {
+const uploadImage = async (req, res) => {
   try {
-    uploadImage(req, res, async (err) => {
+    // Upload image to Cloudinary
+    cloudinary.uploader.upload(req.file.path, { folder: 'Batik' },async (err, result) => {
       if (err) {
-        return res.status(400).json({ error: err.message });
+        console.log(err);
+        return res.status(500).json({
+          success: false,
+          message: 'Error uploading image',
+        });
       }
 
-      // Get file paths from req.files object
-      const { layer1Img, layer2Img, layer3Img } = req.files;
-
-      // Save file paths to the database
-      const kandyan = new Kandyan({
-        modelno: req.body.modelno,
-        layer1Img: layer1Img[0].path, // Save the file path for layer1Img
-        layer2Img: layer2Img[0].path, // Save the file path for layer2Img
-        layer3Img: layer3Img[0].path, // Save the file path for layer3Img
+      // Create a new Kandyan document with the Cloudinary image URL
+      const newKandyan = new Kandyan({
+        image: result.secure_url, // Assuming 'secure_url' contains the Cloudinary image URL
+        // Other fields if needed
       });
 
-      const savedKandyan = await kandyan.save();
+      // Save the new Kandyan document to the database
+      await newKandyan.save();
 
-      res.status(201).json(savedKandyan);
+      // Respond with success message and uploaded image data
+      res.status(200).json({
+        success: true,
+        message: 'Image uploaded successfully!',
+        data: result,
+      });
     });
   } catch (error) {
-    res.status(500).json({ error: "Server error" });
+    console.log(error);
+    res.status(500).json({ error: 'Server error' });
   }
 };
-
-
-
-
 
 const getKandyanData = async (req, res) => {
   try {
@@ -52,4 +49,4 @@ const getKandyanData = async (req, res) => {
   }
 };
 
-module.exports = {uploadImages, getKandyanData };
+module.exports = { uploadImage, getKandyanData };
