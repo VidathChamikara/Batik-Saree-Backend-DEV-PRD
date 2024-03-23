@@ -1,12 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const upload = require("../middleware/multer");
 const connectDatabase = require("../dbConnection");
 const {
-    uploadImage, getKandyanData
+    uploadImages, getKandyanData
 } = require("../controller/kandyanController");
 
-router.post("/uploadImage",  upload.single('image'), uploadImage);
+router.post("/uploadImage",  uploadImages);
 router.get("/getKandyanData",  getKandyanData);
 
 

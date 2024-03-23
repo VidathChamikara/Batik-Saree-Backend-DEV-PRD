@@ -1,38 +1,42 @@
 const mongoose = require("mongoose");
+const upload = require("../utils/multerConfig"); // Import Multer configuration
+
 require("../model/kandyan");
 const Kandyan = mongoose.model("KandyanInfo");
 
-const cloudinary = require("../utils/cloudinary");
+// POST function to handle image upload
+const uploadImage = upload.fields([
+  { name: "layer1Img", maxCount: 1 },
+  { name: "layer2Img", maxCount: 1 },
+  { name: "layer3Img", maxCount: 1 },
+]); // Fields specifies the form fields for each image
 
-
-          
-
-async function uploadImage(req, res) {
+const uploadImages = async (req, res) => {
   try {
-    const result = await cloudinary.uploader.upload(req.file.path);
-    const { modelno } = req.body; // Assuming you're sending the model number in the request body
+    uploadImage(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({ error: err.message });
+      }
 
-    // Save the Cloudinary URL to MongoDB
-    const newKandyan = new Kandyan({
-      modelno: modelno,
-      layer1Img: result.secure_url,
-      // Add other layers if needed
-    });
-    await newKandyan.save();
+      // Get file paths from req.files object
+      const { layer1Img, layer2Img, layer3Img } = req.files;
 
-    res.status(200).json({
-      success: true,
-      message: 'Uploaded!',
-      data: result,
+      // Save file paths to the database
+      const kandyan = new Kandyan({
+        modelno: req.body.modelno,
+        layer1Img: layer1Img[0].path, // Save the file path for layer1Img
+        layer2Img: layer2Img[0].path, // Save the file path for layer2Img
+        layer3Img: layer3Img[0].path, // Save the file path for layer3Img
+      });
+
+      const savedKandyan = await kandyan.save();
+
+      res.status(201).json(savedKandyan);
     });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      success: false,
-      message: 'Error',
-    });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
   }
-}
+};
 
 
 
@@ -48,4 +52,4 @@ const getKandyanData = async (req, res) => {
   }
 };
 
-module.exports = {uploadImage, getKandyanData };
+module.exports = {uploadImages, getKandyanData };
