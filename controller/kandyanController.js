@@ -45,4 +45,26 @@ const getKandyanData = async (req, res) => {
   }
 };
 
-module.exports = { uploadImage, getKandyanData };
+const deleteKandyanData = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract the ID from the request parameters
+
+    // Check if the ID is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid ID" });
+    }
+
+    // Find the document by ID and delete it
+    const deletedKandyan = await Kandyan.findByIdAndDelete(id);
+
+    if (!deletedKandyan) {
+      return res.status(404).json({ error: "KandyanInfo not found" });
+    }
+
+    res.status(200).json({ success: true, message: "KandyanInfo deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+module.exports = { uploadImage, getKandyanData, deleteKandyanData};
