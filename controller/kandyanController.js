@@ -38,7 +38,7 @@ const uploadImage = async (req, res) => {
 
 const getKandyanData = async (req, res) => {
   try {
-    const kandyanData = await KandyanInfo.find({}).collation({}); // Fetch all data from the Kandyan collection
+    const kandyanData = await Kandyan.find({}).collation({}); // Fetch all data from the Kandyan collection
 
     res.status(200).json(kandyanData);
   } catch (error) {
