@@ -67,4 +67,23 @@ const deleteKandyanData = async (req, res) => {
   }
 };
 
-module.exports = { uploadImage, getKandyanData, deleteKandyanData};
+require("../model/kandyanData");
+const KandyanData = mongoose.model("KandyanData");
+
+const kandyanDataSubmit = async (req, res) => {
+  try {
+    const { ModelNo, Layer1Color, Layer2Color, Layer3Color, Material, Price } = req.body;
+
+    // Create a new Contact instance
+    const newKandyanData = new  KandyanData({  ModelNo, Material, Price, Layer1Color, Layer2Color, Layer3Color });
+
+    // Save the new contact to the database
+    await newKandyanData.save();
+
+    res.send({ status: "ok" });
+  } catch (error) {
+    res.send({ status: "error" });
+  }
+};
+
+module.exports = { uploadImage, getKandyanData, deleteKandyanData, kandyanDataSubmit};

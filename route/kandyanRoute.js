@@ -4,7 +4,7 @@ const upload = require("../middleware/multerConfig");
 
 const connectDatabase = require("../dbConnection");
 const {
-     uploadImage, getKandyanData, deleteKandyanData
+     uploadImage, getKandyanData, deleteKandyanData, kandyanDataSubmit
 } = require("../controller/kandyanController");
 
 router.post('/upload', upload.fields([
@@ -14,5 +14,7 @@ router.post('/upload', upload.fields([
   ]), uploadImage);
 router.get("/getKandyanData",  getKandyanData);
 router.delete("/deleteKandyan/:id", deleteKandyanData);
+router.post("/kandyanDataSubmit", kandyanDataSubmit);
+
 
 module.exports = router;
